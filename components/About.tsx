@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef } from "react";
+import Image from "next/image";
 import { motion, useInView } from "framer-motion";
 import { aboutStats } from "@/lib/data";
 
@@ -85,22 +86,24 @@ export default function About() {
           </p>
         </motion.div>
 
-        {/* Right Column — Photo Placeholder */}
+        {/* Right Column — Photo */}
         <motion.div
           variants={itemVariants}
           className="flex justify-center md:justify-end"
         >
           <div className="relative group">
             {/* Green offset border behind */}
-            <div className="absolute top-4 left-4 w-[280px] h-[280px] sm:w-[300px] sm:h-[300px] rounded-lg border-2 border-[#00ff88]/50 transition-all duration-300 group-hover:top-2 group-hover:left-2" />
+            <div className="absolute top-4 left-4 w-[280px] h-[350px] sm:w-[300px] sm:h-[375px] rounded-lg border-2 border-[#00ff88]/50 transition-all duration-300 group-hover:top-2 group-hover:left-2" />
 
             {/* Main photo container */}
-            <div className="gradient-border relative w-[280px] h-[280px] sm:w-[300px] sm:h-[300px] rounded-lg overflow-hidden bg-[#0a192f] transition-transform duration-300 group-hover:-translate-x-1 group-hover:-translate-y-1">
-              <div className="absolute inset-0 bg-gradient-to-br from-[#00ff88]/10 via-[#10b981]/5 to-[#0a192f] flex items-center justify-center">
-                <span className="text-[#64ffda]/30 font-mono text-sm tracking-wider">
-                  Photo
-                </span>
-              </div>
+            <div className="gradient-border relative w-[280px] h-[350px] sm:w-[300px] sm:h-[375px] rounded-lg overflow-hidden bg-[#0a192f] transition-transform duration-300 group-hover:-translate-x-1 group-hover:-translate-y-1">
+              <Image
+                src="/images/mehrzad.png"
+                alt="Mehrzad Babaei"
+                fill
+                className="object-cover object-top"
+                priority
+              />
               {/* Green overlay on hover */}
               <div className="absolute inset-0 bg-[#00ff88]/10 opacity-100 transition-opacity duration-300 group-hover:opacity-0 mix-blend-multiply" />
             </div>
