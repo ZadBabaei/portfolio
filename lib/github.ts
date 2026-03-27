@@ -75,7 +75,7 @@ export async function fetchPortfolioProjects(): Promise<PortfolioProject[]> {
         headers: {
           Accept: "application/vnd.github.v3+json",
         },
-        next: { revalidate: 3600, tags: ["github"] },
+        next: { revalidate: 3600 },
       }
     );
 
@@ -92,7 +92,7 @@ export async function fetchPortfolioProjects(): Promise<PortfolioProject[]> {
             headers: {
               Accept: "application/vnd.github.v3.raw",
             },
-            next: { revalidate: 3600, tags: ["github"] },
+            next: { revalidate: 3600 },
           }
         );
 

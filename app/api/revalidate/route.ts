@@ -1,4 +1,4 @@
-import { revalidatePath, revalidateTag } from "next/cache";
+import { revalidatePath } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
 
 async function handleRevalidate(request: NextRequest) {
@@ -8,7 +8,6 @@ async function handleRevalidate(request: NextRequest) {
     return NextResponse.json({ message: "Invalid secret" }, { status: 401 });
   }
 
-  revalidateTag("github");
   revalidatePath("/");
 
   return NextResponse.json({ revalidated: true, now: Date.now() });
