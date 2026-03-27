@@ -1,3 +1,5 @@
+import { getProjectConfig } from "./project-config";
+
 export interface PortfolioProject {
   title: string;
   description: string;
@@ -7,6 +9,7 @@ export interface PortfolioProject {
   github: string;
   stars: number;
   repoName: string;
+  isManual?: boolean;
 }
 
 interface GitHubRepo {
@@ -46,9 +49,11 @@ function parsePortfolioMarker(readmeContent: string, repo: GitHubRepo): Portfoli
   const live = getValue("live") || "";
   const imagePath = getValue("image") || "";
 
+  // Use a daily cache-bust key so OG images refresh at least once per day
+  const cacheBust = new Date().toISOString().split("T")[0];
   const image = imagePath
     ? `https://raw.githubusercontent.com/ZadBabaei/${repo.name}/${repo.default_branch}/${imagePath}`
-    : `https://opengraph.githubassets.com/1/ZadBabaei/${repo.name}`;
+    : `https://opengraph.githubassets.com/${cacheBust}/ZadBabaei/${repo.name}`;
 
   return {
     title,
@@ -70,7 +75,7 @@ export async function fetchPortfolioProjects(): Promise<PortfolioProject[]> {
         headers: {
           Accept: "application/vnd.github.v3+json",
         },
-        next: { revalidate: 3600 },
+        next: { revalidate: 3600, tags: ["github"] },
       }
     );
 
@@ -87,7 +92,7 @@ export async function fetchPortfolioProjects(): Promise<PortfolioProject[]> {
             headers: {
               Accept: "application/vnd.github.v3.raw",
             },
-            next: { revalidate: 3600 },
+            next: { revalidate: 3600, tags: ["github"] },
           }
         );
 
@@ -109,6 +114,35 @@ export async function fetchPortfolioProjects(): Promise<PortfolioProject[]> {
   } catch {
     return getFallbackProjects();
   }
+}
+
+export async function fetchMergedProjects(): Promise<PortfolioProject[]> {
+  const [githubProjects, config] = await Promise.all([
+    fetchPortfolioProjects(),
+    getProjectConfig(),
+  ]);
+
+  const visible = githubProjects.filter(
+    (p) => !config.hiddenRepos.includes(p.repoName)
+  );
+
+  const manual: PortfolioProject[] = config.manualProjects.map((m) => ({
+    ...m,
+    repoName: m.id,
+    stars: 0,
+    isManual: true,
+  }));
+
+  const all = [...visible, ...manual];
+
+  if (config.displayOrder.length === 0) return all;
+
+  const orderMap = new Map(config.displayOrder.map((id, idx) => [id, idx]));
+  return all.sort((a, b) => {
+    const aIdx = orderMap.get(a.repoName) ?? Infinity;
+    const bIdx = orderMap.get(b.repoName) ?? Infinity;
+    return aIdx - bIdx;
+  });
 }
 
 function getFallbackProjects(): PortfolioProject[] {
