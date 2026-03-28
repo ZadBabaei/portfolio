@@ -84,7 +84,7 @@ export const skills = [
 
 export const experiences = [
   {
-    title: "Volunteer Front-End Developer",
+    title: "Front-End Developer",
     company: "Collective Interchange",
     location: "St. John's, NL",
     period: "November 2025 – Present",
@@ -107,6 +107,18 @@ export const experiences = [
     type: "work" as const,
   },
   {
+    title: "Software Developer (Co-op)",
+    company: "BreatheSuite Inc.",
+    location: "St. John's, NL",
+    period: "January 2021 – September 2021",
+    points: [
+      "Implemented and tested RESTful APIs and cloud-hosted services, supporting production health tech deployments.",
+      "Enhanced web apps using React.js, TypeScript, and Node.js, focusing on performance and maintainability.",
+      "Debugged and resolved production issues using logs and development tools, ensuring reliable system behavior.",
+    ],
+    type: "work" as const,
+  },
+  {
     title: "Bachelor of Computer Science",
     company: "Memorial University of Newfoundland",
     location: "St. John's, NL",
@@ -125,7 +137,6 @@ export const experiences = [
 ] as const;
 
 export const aboutStats = [
-  { label: "Years Experience", value: "2+" },
   { label: "Technologies", value: "15+" },
   { label: "Degree", value: "B.Sc CS" },
 ] as const;
