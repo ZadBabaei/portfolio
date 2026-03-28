@@ -5,12 +5,12 @@ import Experience from "@/components/Experience";
 import Projects from "@/components/Projects";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
-import { fetchPortfolioProjects } from "@/lib/github";
+import { fetchMergedProjects } from "@/lib/github";
 
 export const revalidate = 3600; // Re-fetch GitHub data every hour
 
 export default async function Home() {
-  const projects = await fetchPortfolioProjects();
+  const projects = await fetchMergedProjects();
 
   return (
     <main className="bg-[#0a192f]">
