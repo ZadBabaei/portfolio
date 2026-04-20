@@ -141,7 +141,7 @@ export default function Navbar() {
               transition={{ delay: 0.1 * navLinks.length, duration: 0.4 }}
             >
               <a
-                href="/public/Mehrzad Babaei - Resume.pdf"
+                href="/MehrzadBabaeiResume.pdf"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="ml-3 inline-block rounded border border-green-400 px-4 py-1.5 text-sm font-mono text-green-400 transition-all duration-200 hover:bg-green-400/10 hover:shadow-[0_0_12px_rgba(0,255,136,0.15)]"
@@ -232,7 +232,7 @@ export default function Navbar() {
               ))}
 
               <motion.a
-                href="/public/Mehrzad Babaei - Resume.pdf"
+                href="/MehrzadBabaeiResume.pdf"
                 target="_blank"
                 rel="noopener noreferrer"
                 initial={{ opacity: 0, x: 50 }}

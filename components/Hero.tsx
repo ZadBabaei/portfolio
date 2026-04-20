@@ -293,7 +293,7 @@ export default function Hero() {
             </a>
 
             <a
-              href="/public/Mehrzad Babaei - Resume.pdf"
+              href="/MehrzadBabaeiResume.pdf"
               target="_blank"
               rel="noopener noreferrer"
               className="group inline-flex items-center gap-2 rounded-md bg-[#10b981] px-6 py-3 font-mono text-sm text-[#0a192f] font-semibold transition-all duration-300 hover:bg-[#00ff88] hover:shadow-lg hover:shadow-[#00ff88]/20"
