@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
-import Navbar from "@/components/Navbar";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -14,9 +13,12 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Mehrzad Babaei | Full-Stack Developer",
+  title: "ZB | Full-Stack Developer",
   description:
     "Full-Stack Developer specializing in React, Next.js, TypeScript, and Node.js. Building modern web experiences with cutting-edge technology.",
+  icons: {
+    icon: "/icon.svg",
+  },
   keywords: [
     "Mehrzad Babaei",
     "Full-Stack Developer",
@@ -47,7 +49,6 @@ export default function RootLayout({
       <body
         className={`${inter.variable} ${jetbrainsMono.variable} font-sans antialiased`}
       >
-        <Navbar />
         {children}
       </body>
     </html>

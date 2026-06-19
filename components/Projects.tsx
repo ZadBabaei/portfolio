@@ -4,11 +4,10 @@ import { useState } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import {
-  FiFolder,
-  FiGithub,
   FiExternalLink,
-  FiStar,
+  FiGithub,
   FiRefreshCw,
+  FiStar,
 } from "react-icons/fi";
 import type { PortfolioProject } from "@/lib/github";
 
@@ -17,17 +16,22 @@ interface ProjectsProps {
 }
 
 const cardVariants = {
-  hidden: { opacity: 0, y: 40 },
-  visible: (i: number) => ({
+  hidden: { opacity: 0, y: 28 },
+  visible: (index: number) => ({
     opacity: 1,
     y: 0,
     transition: {
-      delay: i * 0.1,
-      duration: 0.5,
+      delay: index * 0.08,
+      duration: 0.45,
       ease: "easeOut" as const,
     },
   }),
 };
+
+function isMovieTracker(project: PortfolioProject) {
+  const target = `${project.title} ${project.repoName}`.toLowerCase();
+  return target.includes("movie") && target.includes("tracker");
+}
 
 export default function Projects({ projects }: ProjectsProps) {
   const [imgErrors, setImgErrors] = useState<Record<string, boolean>>({});
@@ -36,190 +40,152 @@ export default function Projects({ projects }: ProjectsProps) {
     setImgErrors((prev) => ({ ...prev, [repoName]: true }));
   };
 
+  const sortedProjects = [...projects].sort((a, b) => {
+    if (isMovieTracker(a)) return -1;
+    if (isMovieTracker(b)) return 1;
+    return 0;
+  });
+
   return (
     <section
       id="projects"
-      className="relative py-24 px-6 sm:px-12 lg:px-24"
-      style={{ backgroundColor: "#0a192f" }}
+      className="relative overflow-hidden px-6 py-24 sm:px-12 lg:px-24"
     >
-      <div className="max-w-6xl mx-auto">
-        {/* Section Heading */}
+      <div className="pointer-events-none absolute bottom-20 right-0 h-96 w-96 rounded-full bg-[#2ECC71]/10 blur-[130px]" />
+
+      <div className="relative z-10 mx-auto max-w-6xl">
         <motion.div
-          className="flex items-center gap-4 mb-16"
+          className="mb-12 flex flex-col gap-4 md:flex-row md:items-end md:justify-between"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
         >
-          <h2 className="text-2xl sm:text-3xl font-bold whitespace-nowrap">
-            <span style={{ color: "#00ff88" }} className="font-mono text-lg sm:text-xl mr-2">
-              04.
-            </span>
-            <span style={{ color: "#ccd6f6" }}>Things I&apos;ve Built</span>
-          </h2>
-          <div
-            className="h-px flex-grow max-w-xs"
-            style={{ backgroundColor: "#233554" }}
-          />
+          <div className="max-w-3xl">
+            <p className="eyebrow mb-4">04 / Projects</p>
+            <h2 className="text-3xl font-black leading-tight text-white sm:text-5xl">
+              Feature-card projects synced from GitHub.
+            </h2>
+          </div>
+          <div className="inline-flex w-fit items-center gap-2 rounded-full border border-[#2ECC71]/25 bg-[#2ECC71]/10 px-4 py-2 font-mono text-xs text-[#A7F3C4]">
+            <FiRefreshCw aria-hidden="true" className="h-3.5 w-3.5" />
+            GitHub auto-sync
+          </div>
         </motion.div>
 
-        {/* Project Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {projects.map((project, i) => (
-            <motion.div
-              key={project.repoName}
-              custom={i}
-              variants={cardVariants}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: "-50px" }}
-              className="group relative flex flex-col rounded-lg overflow-hidden border transition-all duration-300 hover:-translate-y-[5px]"
-              style={{
-                backgroundColor: "#112240",
-                borderColor: "#233554",
-              }}
-              onMouseEnter={(e) => {
-                const el = e.currentTarget;
-                el.style.borderColor = "#00ff88";
-                el.style.boxShadow = "0 10px 30px -15px rgba(0, 255, 136, 0.15)";
-              }}
-              onMouseLeave={(e) => {
-                const el = e.currentTarget;
-                el.style.borderColor = "#233554";
-                el.style.boxShadow = "none";
-              }}
-            >
-              {/* Image / Placeholder */}
-              <div className="relative w-full h-[200px] overflow-hidden">
-                {project.image && !imgErrors[project.repoName] ? (
-                  <Image
-                    src={project.image}
-                    alt={project.title}
-                    fill
-                    className="object-cover transition-transform duration-300 group-hover:scale-105"
-                    onError={() => handleImageError(project.repoName)}
-                  />
-                ) : (
-                  <div
-                    className="w-full h-full flex items-center justify-center p-6"
-                    style={{
-                      background:
-                        "linear-gradient(135deg, #0a192f 0%, #112240 50%, #1a365d 100%)",
-                    }}
-                  >
-                    <span
-                      className="text-xl font-bold text-center opacity-40 select-none"
-                      style={{ color: "#ccd6f6" }}
-                    >
-                      {project.title}
-                    </span>
-                  </div>
-                )}
-              </div>
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+          {sortedProjects.map((project, index) => {
+            const featured = isMovieTracker(project);
 
-              {/* Card Body */}
-              <div className="flex flex-col flex-grow p-6">
-                {/* Top row: folder icon + external links */}
-                <div className="flex items-center justify-between mb-4">
-                  <FiFolder
-                    className="w-10 h-10"
-                    style={{ color: "#00ff88" }}
-                    strokeWidth={1}
-                  />
-                  <div className="flex items-center gap-3">
-                    {project.github && (
-                      <a
-                        href={project.github}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        aria-label={`GitHub repository for ${project.title}`}
-                        className="transition-colors duration-200 hover:text-[#00ff88]"
-                        style={{ color: "#a8b2d1" }}
-                      >
-                        <FiGithub className="w-5 h-5" />
-                      </a>
-                    )}
-                    {project.live && (
-                      <a
-                        href={project.live}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        aria-label={`Live demo for ${project.title}`}
-                        className="transition-colors duration-200 hover:text-[#00ff88]"
-                        style={{ color: "#a8b2d1" }}
-                      >
-                        <FiExternalLink className="w-5 h-5" />
-                      </a>
-                    )}
-                  </div>
-                </div>
-
-                {/* Title */}
-                <h3
-                  className="text-lg font-bold mb-2 transition-colors duration-200 group-hover:text-[#00ff88]"
-                  style={{ color: "#ccd6f6" }}
-                >
-                  {project.title}
-                </h3>
-
-                {/* Description */}
-                <p
-                  className="text-sm leading-relaxed mb-4 flex-grow"
-                  style={{
-                    color: "#8892b0",
-                    display: "-webkit-box",
-                    WebkitLineClamp: 3,
-                    WebkitBoxOrient: "vertical",
-                    overflow: "hidden",
-                  }}
-                >
-                  {project.description}
-                </p>
-
-                {/* Stars */}
-                {project.stars > 0 && (
-                  <div
-                    className="flex items-center gap-1 mb-3 text-sm"
-                    style={{ color: "#00ff88" }}
-                  >
-                    <FiStar className="w-4 h-4" />
-                    <span>{project.stars}</span>
+            return (
+              <motion.article
+                key={project.repoName}
+                custom={index}
+                variants={cardVariants}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, margin: "-50px" }}
+                className={`group relative flex min-h-full flex-col overflow-hidden rounded-2xl border bg-[#0B2A1A] transition-all duration-300 hover:-translate-y-1 hover:border-[#2ECC71]/60 hover:shadow-[0_24px_70px_rgba(0,0,0,0.35),0_0_36px_rgba(46,204,113,0.08)] ${
+                  featured
+                    ? "border-[#2ECC71]/45 md:col-span-2 xl:col-span-2"
+                    : "border-white/10"
+                }`}
+              >
+                {featured && (
+                  <div className="absolute left-4 top-4 z-20 rounded-full border border-[#2ECC71]/35 bg-[#03140D]/90 px-3 py-1 font-mono text-xs uppercase tracking-[0.14em] text-[#A7F3C4] backdrop-blur-md">
+                    Featured
                   </div>
                 )}
 
-                {/* Tags */}
-                <div className="flex flex-wrap gap-2 mt-auto">
-                  {project.tags.map((tag) => (
-                    <span
-                      key={tag}
-                      className="text-xs font-mono px-2.5 py-1 rounded-full border"
-                      style={{
-                        color: "#64ffda",
-                        borderColor: "rgba(100, 255, 218, 0.3)",
-                        backgroundColor: "rgba(100, 255, 218, 0.05)",
-                      }}
-                    >
-                      {tag}
-                    </span>
-                  ))}
+                <div
+                  className={`relative overflow-hidden bg-[#020A08] ${
+                    featured ? "h-72" : "h-52"
+                  }`}
+                >
+                  {project.image && !imgErrors[project.repoName] ? (
+                    <Image
+                      src={project.image}
+                      alt={project.title}
+                      fill
+                      className="object-cover transition-transform duration-500 group-hover:scale-105"
+                      onError={() => handleImageError(project.repoName)}
+                    />
+                  ) : (
+                    <div className="flex h-full items-center justify-center bg-[radial-gradient(circle_at_35%_20%,rgba(46,204,113,0.16),transparent_30rem),linear-gradient(135deg,#020A08,#03140D_55%,#0B2A1A)] p-6">
+                      <span className="max-w-xs text-center text-2xl font-black text-white/35">
+                        {project.title}
+                      </span>
+                    </div>
+                  )}
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#0B2A1A] via-[#0B2A1A]/20 to-transparent" />
                 </div>
-              </div>
-            </motion.div>
-          ))}
+
+                <div className="flex flex-1 flex-col p-5 sm:p-6">
+                  <div className="mb-4 flex items-start justify-between gap-4">
+                    <div>
+                      <h3 className="text-xl font-black text-white transition-colors duration-200 group-hover:text-[#A7F3C4]">
+                        {project.title}
+                      </h3>
+                      <p className="mt-1 font-mono text-xs text-slate-500">
+                        {project.repoName}
+                      </p>
+                    </div>
+
+                    <div className="flex flex-none items-center gap-2">
+                      {project.github && (
+                        <a
+                          href={project.github}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          aria-label={`GitHub repository for ${project.title}`}
+                          className="rounded-xl border border-white/10 bg-white/[0.04] p-2 text-slate-300 transition-colors duration-200 hover:border-[#2ECC71]/40 hover:text-[#2ECC71]"
+                        >
+                          <FiGithub aria-hidden="true" className="h-4 w-4" />
+                        </a>
+                      )}
+                      {project.live && (
+                        <a
+                          href={project.live}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          aria-label={`Live demo for ${project.title}`}
+                          className="rounded-xl border border-white/10 bg-white/[0.04] p-2 text-slate-300 transition-colors duration-200 hover:border-[#2ECC71]/40 hover:text-[#2ECC71]"
+                        >
+                          <FiExternalLink
+                            aria-hidden="true"
+                            className="h-4 w-4"
+                          />
+                        </a>
+                      )}
+                    </div>
+                  </div>
+
+                  <p className="mb-5 line-clamp-4 flex-1 text-sm leading-7 text-slate-400">
+                    {project.description}
+                  </p>
+
+                  {project.stars > 0 && (
+                    <div className="mb-4 inline-flex w-fit items-center gap-1.5 rounded-full border border-[#2ECC71]/20 bg-[#2ECC71]/10 px-3 py-1 text-sm text-[#A7F3C4]">
+                      <FiStar aria-hidden="true" className="h-4 w-4" />
+                      <span>{project.stars}</span>
+                    </div>
+                  )}
+
+                  <div className="mt-auto flex flex-wrap gap-2">
+                    {project.tags.map((tag) => (
+                      <span
+                        key={tag}
+                        className="rounded-full border border-[#2ECC71]/20 bg-[#2ECC71]/10 px-2.5 py-1 font-mono text-xs text-[#A7F3C4]"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </motion.article>
+            );
+          })}
         </div>
-
-        {/* Auto-sync badge */}
-        <motion.div
-          className="flex items-center justify-center gap-2 mt-12 text-sm font-mono"
-          style={{ color: "rgba(16, 185, 129, 0.6)" }}
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.5, duration: 0.5 }}
-        >
-          <FiRefreshCw className="w-3.5 h-3.5" />
-          <span>Projects auto-synced from GitHub</span>
-        </motion.div>
       </div>
     </section>
   );

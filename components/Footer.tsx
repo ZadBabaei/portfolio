@@ -2,15 +2,13 @@
 
 const Footer = () => {
   return (
-    <footer className="py-8 px-6 bg-[#020c1b] text-center">
-      <p className="text-sm text-[#8892b0]">
-        Designed &amp; Built by{" "}
-        <span className="hover:text-[#64ffda] transition-colors duration-200 cursor-default">
-          Mehrzad Babaei
-        </span>
+    <footer className="border-t border-white/10 bg-[#020A08]/85 px-6 py-8 pb-[calc(6rem+env(safe-area-inset-bottom))] text-center backdrop-blur-md lg:pb-8">
+      <p className="text-sm text-slate-400">
+        Designed and built by{" "}
+        <span className="font-semibold text-white">Mehrzad Babaei</span>
       </p>
-      <p className="text-xs text-[#495670] mt-2">
-        Built with Next.js, TypeScript &amp; Tailwind CSS
+      <p className="mt-2 font-mono text-xs text-slate-600">
+        Next.js / TypeScript / Tailwind CSS
       </p>
     </footer>
   );

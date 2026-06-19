@@ -22,6 +22,7 @@ import {
   FaCloud,
   FaLock,
   FaDatabase,
+  FaJava,
 } from "react-icons/fa";
 
 export const navLinks = [
@@ -48,6 +49,7 @@ export const skills = [
     category: "Backend",
     items: [
       { name: "Node.js", icon: SiNodedotjs, color: "#339933" },
+      { name: "Java", icon: FaJava, color: "#F89820" },
       { name: "Python", icon: SiPython, color: "#3776AB" },
     ],
   },

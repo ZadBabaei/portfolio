@@ -1,150 +1,148 @@
 "use client";
 
 import { motion, useInView } from "framer-motion";
-import { useRef } from "react";
+import { useMemo, useRef } from "react";
+import { FiCloud, FiCode, FiCpu, FiDatabase } from "react-icons/fi";
 import { skills } from "@/lib/data";
 
-const containerVariants = {
-  hidden: {},
-  visible: {
-    transition: {
-      staggerChildren: 0.15,
-    },
-  },
-};
+const categoryIcons = {
+  Frontend: FiCode,
+  Backend: FiCpu,
+  "Cloud/DevOps": FiCloud,
+  "Data/AI": FiDatabase,
+} as const;
 
-const categoryVariants = {
-  hidden: { opacity: 0, y: 30 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.5,
-      ease: "easeOut" as const,
-      staggerChildren: 0.08,
-    },
-  },
-};
-
-const cardVariants = {
-  hidden: { opacity: 0, y: 20, scale: 0.95 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    scale: 1,
-    transition: {
-      duration: 0.4,
-      ease: "easeOut" as const,
-    },
-  },
-};
+type SkillCategory = keyof typeof categoryIcons;
 
 export default function Skills() {
   const sectionRef = useRef<HTMLElement>(null);
   const isInView = useInView(sectionRef, { once: true, margin: "-100px" });
 
+  const groupedSkills = useMemo(() => {
+    const groups: Record<SkillCategory, (typeof skills)[number]["items"][number][]> = {
+      Frontend: [],
+      Backend: [],
+      "Cloud/DevOps": [],
+      "Data/AI": [],
+    };
+
+    skills.forEach((group) => {
+      if (group.category === "Frontend") {
+        groups.Frontend.push(...group.items);
+      } else if (group.category === "Backend") {
+        groups.Backend.push(...group.items);
+      } else if (
+        group.category === "AWS Cloud" ||
+        group.category === "DevOps & Tools"
+      ) {
+        groups["Cloud/DevOps"].push(
+          ...group.items.filter((item) => item.name !== "OpenAI API")
+        );
+      } else if (group.category === "Database") {
+        groups["Data/AI"].push(...group.items);
+      }
+    });
+
+    const aiTool = skills
+      .find((group) => group.category === "DevOps & Tools")
+      ?.items.find((item) => item.name === "OpenAI API");
+
+    if (aiTool) groups["Data/AI"].push(aiTool);
+
+    return groups;
+  }, []);
+
   return (
     <section
       id="skills"
       ref={sectionRef}
-      className="relative py-24 px-6 sm:px-12 lg:px-24"
+      className="relative overflow-hidden px-6 py-24 sm:px-12 lg:px-24"
     >
-      {/* Background gradient accent */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[#00ff88]/[0.03] rounded-full blur-[120px]" />
-      </div>
+      <div className="pointer-events-none absolute right-0 top-1/3 h-80 w-80 rounded-full bg-[#0B2A1A]/55 blur-[120px]" />
 
-      <div className="max-w-6xl mx-auto relative z-10">
-        {/* Section Heading */}
+      <div className="relative z-10 mx-auto max-w-6xl">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.5 }}
-          className="flex items-center gap-4 mb-16"
+          className="mb-12 flex flex-col gap-4 md:flex-row md:items-end md:justify-between"
         >
-          <h2 className="text-2xl sm:text-3xl font-bold text-gray-100 whitespace-nowrap">
-            <span className="font-mono text-[#00ff88] text-lg sm:text-xl mr-2">
-              02.
-            </span>
-            Skills &amp; Technologies
-          </h2>
-          <div className="h-px flex-1 bg-gradient-to-r from-[#00ff88]/40 to-transparent" />
+          <div className="max-w-3xl">
+            <p className="eyebrow mb-4">02 / Skills</p>
+            <h2 className="text-3xl font-black leading-tight text-white sm:text-5xl">
+              A practical stack for building, shipping, and debugging products.
+            </h2>
+          </div>
+          <p className="max-w-sm text-sm leading-7 text-slate-400">
+            Organized by how I use the tools in real product work: interface,
+            service layer, deployment, and data workflows.
+          </p>
         </motion.div>
 
-        {/* Skills Grid */}
         <motion.div
-          variants={containerVariants}
           initial="hidden"
           animate={isInView ? "visible" : "hidden"}
-          className="space-y-14"
+          variants={{
+            hidden: {},
+            visible: { transition: { staggerChildren: 0.08 } },
+          }}
+          className="grid gap-5 md:grid-cols-2"
         >
-          {skills.map((group) => (
-            <motion.div key={group.category} variants={categoryVariants}>
-              {/* Category Label */}
-              <h3 className="text-sm font-mono uppercase tracking-widest text-[#64ffda] mb-6">
-                {group.category}
-              </h3>
+          {(Object.keys(groupedSkills) as SkillCategory[]).map((category) => {
+            const Icon = categoryIcons[category];
 
-              {/* Cards Grid */}
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-                {group.items.map((item, itemIndex) => (
-                  <motion.div
-                    key={item.name}
-                    variants={cardVariants}
-                    className="group relative"
-                  >
-                    {/* Floating animation wrapper */}
-                    <motion.div
-                      animate={{
-                        y: [0, -6, 0],
-                      }}
-                      transition={{
-                        duration: 3,
-                        repeat: Infinity,
-                        ease: "easeInOut",
-                        delay: itemIndex * 0.2,
-                      }}
-                    >
-                      <div
-                        className="relative flex flex-col items-center justify-center gap-3 p-5 rounded-xl
-                          bg-[#112240]/50 backdrop-blur-sm
-                          border border-white/[0.06]
-                          transition-all duration-300 ease-out
-                          hover:scale-105
-                          hover:border-white/[0.15]
-                          cursor-default"
-                        style={
-                          {
-                            "--glow-color": item.color,
-                          } as React.CSSProperties
-                        }
+            return (
+              <motion.div
+                key={category}
+                variants={{
+                  hidden: { opacity: 0, y: 24 },
+                  visible: {
+                    opacity: 1,
+                    y: 0,
+                    transition: { duration: 0.45, ease: "easeOut" },
+                  },
+                }}
+                className="glass-card rounded-2xl p-5 transition-colors duration-200 hover:border-[#2ECC71]/35"
+              >
+                <div className="mb-5 flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#2ECC71]/10 text-[#2ECC71]">
+                      <Icon aria-hidden="true" className="h-5 w-5" />
+                    </span>
+                    <div>
+                      <h3 className="text-lg font-bold text-white">
+                        {category}
+                      </h3>
+                      <p className="text-sm text-slate-500">
+                        {groupedSkills[category].length} tools
+                      </p>
+                    </div>
+                  </div>
+                  <span className="h-2 w-2 rounded-full bg-[#2ECC71] shadow-[0_0_18px_rgba(46,204,113,0.7)]" />
+                </div>
+
+                <div className="flex flex-wrap gap-2">
+                  {groupedSkills[category].map((item) => {
+                    const SkillIcon = item.icon;
+
+                    return (
+                      <span
+                        key={item.name}
+                        className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-black/25 px-3 py-2 text-sm text-slate-200"
                       >
-                        {/* Hover glow effect */}
-                        <div
-                          className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
-                          style={{
-                            boxShadow: `0 0 25px ${item.color}20, inset 0 0 25px ${item.color}08`,
-                            border: `1px solid ${item.color}30`,
-                          }}
-                        />
-
-                        {/* Icon */}
-                        <item.icon
-                          className="text-3xl sm:text-4xl transition-all duration-300 group-hover:drop-shadow-lg"
+                        <SkillIcon
+                          aria-hidden="true"
+                          className="h-4 w-4"
                           style={{ color: item.color }}
                         />
-
-                        {/* Skill Name */}
-                        <span className="text-xs sm:text-sm text-gray-400 group-hover:text-gray-200 transition-colors duration-300 text-center font-medium">
-                          {item.name}
-                        </span>
-                      </div>
-                    </motion.div>
-                  </motion.div>
-                ))}
-              </div>
-            </motion.div>
-          ))}
+                        {item.name}
+                      </span>
+                    );
+                  })}
+                </div>
+              </motion.div>
+            );
+          })}
         </motion.div>
       </div>
     </section>
