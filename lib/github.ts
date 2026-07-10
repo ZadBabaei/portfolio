@@ -172,7 +172,7 @@ function getFallbackProjects(): PortfolioProject[] {
     {
       title: "Portfolio Website",
       description:
-        "A modern, auto-updating developer portfolio built with Next.js 15, TypeScript, and Tailwind CSS. Projects auto-sync from GitHub READMEs via ISR and webhook revalidation.",
+        "A modern, auto-updating developer portfolio built with Next.js 16, TypeScript, and Tailwind CSS. Projects auto-sync from GitHub READMEs via ISR and webhook revalidation.",
       tags: ["Next.js", "TypeScript", "Tailwind CSS", "Framer Motion", "GitHub API"],
       live: "https://portfolio.zadprogramming.com",
       image: "",
